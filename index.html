@@ -1,0 +1,3079 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gym Performance Tracker</title>
+    <meta name="description" content="A focused gym performance tracker for consistent training progress" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <style>
+:root {
+  --bg: #0a0f19;
+  --bg-strong: #0d1320;
+  --panel: rgba(18, 25, 38, 0.9);
+  --panel-strong: #111b2b;
+  --panel-alt: #0f172a;
+  --border: rgba(148, 163, 184, 0.12);
+  --text: #edf2ff;
+  --muted: #a7b4c9;
+  --soft: #7d8aa5;
+  --accent: #5eead4;
+  --accent-2: #7c9cff;
+  --accent-3: #f97316;
+  --success: #22c55e;
+  --warning: #fbbf24;
+  --danger: #ef4444;
+  --shadow: 0 18px 48px rgba(10, 15, 25, 0.48);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(124, 156, 255, 0.2), transparent 24%),
+    radial-gradient(circle at bottom right, rgba(94, 234, 212, 0.18), transparent 18%),
+    var(--bg);
+  color: var(--text);
+  font-family: "Inter", sans-serif;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button,
+input,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input,
+select,
+button {
+  min-height: 44px;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100vh;
+  padding: 26px 18px;
+  background: rgba(10, 15, 25, 0.96);
+  border-right: 1px solid var(--border);
+}
+
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 10px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+}
+
+.brand-badge {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #04131e;
+  font-weight: 800;
+}
+
+.brand-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.brand-subtitle {
+  color: var(--muted);
+  font-size: 0.72rem;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-item {
+  width: 100%;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  text-align: left;
+  padding: 12px 14px;
+  border-radius: 12px;
+  transition: 0.2s ease;
+  font-weight: 600;
+}
+
+.nav-item.active,
+.nav-item:hover {
+  background: rgba(124, 156, 255, 0.08);
+  color: var(--text);
+  border-color: rgba(124, 156, 255, 0.3);
+}
+
+.sidebar-card,
+.panel,
+.large-panel,
+.modal-card {
+  background: rgba(17, 24, 39, 0.82);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+.sidebar-card {
+  margin-top: auto;
+  padding: 16px;
+}
+
+.mini-label {
+  color: var(--soft);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.mini-value {
+  margin-top: 10px;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.main-panel {
+  padding: 28px;
+  min-width: 0;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--soft);
+  font-size: 0.71rem;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 0;
+  font-size: clamp(2rem, 2.8vw, 2.6rem);
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.member-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 12px;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.45);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.member-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0 4px rgba(36, 139, 103, 0.12);
+}
+
+.primary-btn,
+.ghost-btn,
+.icon-btn,
+.small-btn {
+  border: 0;
+  border-radius: 12px;
+  padding: 11px 16px;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #06131b;
+  font-weight: 700;
+  box-shadow: 0 12px 28px rgba(94, 234, 212, 0.22);
+}
+
+.ghost-btn {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.icon-btn {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+}
+
+.primary-btn:hover,
+.ghost-btn:hover,
+.icon-btn:hover,
+.nav-item:hover,
+.small-btn:hover {
+  transform: translateY(-1px);
+}
+
+.view {
+  display: none;
+}
+
+.view.active {
+  display: block;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(180px, 1fr));
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.stat-card {
+  padding: 18px 20px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+
+.stat-label {
+  color: var(--soft);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+.stat-value {
+  font-size: clamp(1.6rem, 2.1vw, 2.2rem);
+  font-weight: 800;
+  margin: 0;
+}
+
+.stat-meta {
+  color: var(--muted);
+  margin-top: 8px;
+  font-size: 0.82rem;
+}
+
+.dashboard-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 22px;
+  padding: 24px 26px;
+  border: 1px solid rgba(24, 32, 35, 0.1);
+  border-radius: 16px;
+  background: linear-gradient(110deg, #182023 0%, #2d3a35 58%, #4f5d35 100%);
+  color: #fffdf8;
+  box-shadow: 0 18px 38px rgba(24, 32, 35, 0.14);
+}
+
+.dashboard-hero .eyebrow,
+.dashboard-hero p {
+  color: rgba(255, 253, 248, 0.72);
+}
+
+.dashboard-hero h2 {
+  margin: 0 0 6px;
+  font-size: clamp(1.45rem, 2.4vw, 2.05rem);
+}
+
+.dashboard-hero p {
+  margin-bottom: 0;
+}
+
+.hero-date {
+  flex: 0 0 auto;
+  padding: 10px 14px;
+  border: 1px solid rgba(255, 253, 248, 0.2);
+  border-radius: 10px;
+  color: rgba(255, 253, 248, 0.86);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.panel-grid.two-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.panel,
+.large-panel {
+  padding: 22px;
+}
+
+.large-panel {
+  min-height: 280px;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.chip {
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.28);
+  color: #9defbb;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.exercise-list,
+.history-list,
+.list-stack,
+.pr-list,
+.exercise-plan-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.exercise-card {
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(5, 10, 18, 0.32);
+}
+
+.exercise-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.exercise-title {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.exercise-subtitle {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin: 4px 0 0;
+}
+
+.small-btn {
+  border: 1px solid rgba(94, 234, 212, 0.4);
+  background: rgba(94, 234, 212, 0.08);
+  color: var(--text);
+  font-weight: 600;
+  padding: 8px 12px;
+}
+
+.previous-box {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(124, 156, 255, 0.06);
+  border: 1px solid rgba(124, 156, 255, 0.2);
+}
+
+.previous-box strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.previous-box p,
+.summary-row p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.sets-form {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.set-row {
+  display: grid;
+  grid-template-columns: 62px 120px 96px 120px 1fr 98px;
+  gap: 8px;
+  align-items: center;
+}
+
+.set-label {
+  color: var(--soft);
+  font-weight: 600;
+}
+
+.set-row input,
+.mini-form input,
+.search-input,
+.settings-grid input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.set-row input::placeholder,
+.mini-form input::placeholder {
+  color: var(--soft);
+}
+
+.save-workout-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.history-header {
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.history-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.history-item,
+.list-item,
+.pr-item,
+.exercise-plan-item {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 18px;
+  background: rgba(8, 11, 20, 0.4);
+}
+
+.history-top,
+.exercise-plan-head,
+.list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.history-details {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.history-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mini-form {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.search-input {
+  max-width: 260px;
+}
+
+.pr-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.pr-item strong {
+  display: block;
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+
+.summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.summary-row:last-child {
+  border-bottom: 0;
+}
+
+.calendar-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.calendar-cell {
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.calendar-cell.done {
+  background: rgba(34, 197, 94, 0.13);
+  border-color: rgba(34, 197, 94, 0.3);
+  color: #b8f5ce;
+}
+
+.canvas-wrap {
+  width: 100%;
+  min-height: 220px;
+}
+
+canvas {
+  width: 100% !important;
+  height: 220px !important;
+  display: block;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 18px;
+  margin: 18px 0 24px;
+}
+
+.settings-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--muted);
+}
+
+.backup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.small-ghost {
+  padding: 9px 12px;
+}
+
+.mini-select {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.panel-spacer {
+  margin-top: 20px;
+}
+
+.auth-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: radial-gradient(circle at top, rgba(124, 156, 255, 0.14), transparent 30%), var(--bg);
+}
+
+.auth-card {
+  width: min(100%, 420px);
+  background: rgba(17, 24, 39, 0.86);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  padding: 26px;
+}
+
+.auth-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.auth-tab {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-weight: 700;
+}
+
+.auth-tab.active {
+  background: rgba(124, 156, 255, 0.12);
+  border-color: rgba(124, 156, 255, 0.35);
+  color: var(--text);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--muted);
+}
+
+.auth-message {
+  min-height: 24px;
+  margin-bottom: 12px;
+  color: var(--success);
+  font-size: 0.9rem;
+}
+
+.auth-message.error {
+  color: var(--danger);
+}
+
+.hidden {
+  display: none !important;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 6, 12, 0.7);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  z-index: 50;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-card {
+  width: min(760px, 100%);
+  padding: 20px;
+}
+
+.edit-form-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.edit-set-row {
+  display: grid;
+  grid-template-columns: 60px 120px 90px 120px 220px 1fr;
+  gap: 8px;
+}
+
+.empty-state {
+  color: var(--muted);
+  padding: 18px 16px;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.01);
+}
+
+@media (max-width: 1100px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: thin;
+  }
+
+  .nav-item {
+    flex: 0 0 auto;
+    width: auto;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 760px) {
+  body {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .app-shell {
+    display: block;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    gap: 10px;
+    padding: 10px 12px 8px;
+    background: rgba(10, 15, 25, 0.94);
+    backdrop-filter: blur(18px);
+  }
+
+  .brand-wrap {
+    padding: 8px 10px;
+    border-radius: 14px;
+  }
+
+  .brand-badge {
+    width: 34px;
+    height: 34px;
+    border-radius: 11px;
+  }
+
+  .brand-subtitle {
+    font-size: 0.68rem;
+  }
+
+  .nav {
+    gap: 6px;
+    margin: 0 -12px;
+    padding: 0 12px 2px;
+  }
+
+  .nav-item {
+    min-height: 40px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.78rem;
+  }
+
+  .sidebar-card {
+    display: none;
+  }
+
+  .main-panel {
+    padding: 18px 12px 32px;
+  }
+
+  .stats-grid,
+  .panel-grid.two-col,
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 94px;
+    z-index: 10;
+    min-width: 0;
+    margin: -18px -12px 18px;
+    padding: 14px 12px;
+    flex-direction: row;
+    align-items: center;
+    background: rgba(10, 15, 25, 0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  h1 {
+    font-size: 1.65rem;
+  }
+
+  .eyebrow {
+    font-size: 0.64rem;
+  }
+
+  .topbar-actions {
+    width: auto;
+    gap: 6px;
+    flex: 0 0 auto;
+  }
+
+  .topbar-actions > button {
+    width: auto;
+  }
+
+  .topbar-actions .ghost-btn:first-child {
+    display: none;
+  }
+
+  .topbar-actions .primary-btn,
+  .topbar-actions .ghost-btn {
+    width: auto;
+    padding: 9px 11px;
+    font-size: 0.78rem;
+  }
+
+  .set-row,
+  .edit-set-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .set-label {
+    grid-column: span 2;
+    font-size: 0.8rem;
+  }
+
+  .set-row .small-btn,
+  .edit-set-row .small-btn {
+    grid-column: span 2;
+    width: 100%;
+  }
+
+  .exercise-card,
+  .panel,
+  .large-panel {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .exercise-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .exercise-head .small-btn,
+  .save-workout-row .primary-btn {
+    width: 100%;
+  }
+
+  .save-workout-row {
+    display: block;
+  }
+
+  .history-item,
+  .list-item,
+  .pr-item,
+  .exercise-plan-item {
+    padding: 14px;
+  }
+
+  .history-top,
+  .exercise-plan-head,
+  .list-item,
+  .history-filters {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .history-filters {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .search-input,
+  .mini-select {
+    width: 100%;
+    max-width: none;
+  }
+
+  .backup-actions {
+    flex-direction: column;
+  }
+
+  .backup-actions .primary-btn,
+  .backup-actions .ghost-btn,
+  .mini-form .primary-btn,
+  .auth-form .primary-btn {
+    width: 100%;
+  }
+
+  .auth-screen {
+    padding: 16px;
+    align-items: start;
+    padding-top: 11vh;
+  }
+
+  .auth-card {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .history-filters {
+    gap: 10px;
+  }
+
+  .summary-row {
+    align-items: flex-start;
+  }
+
+  canvas {
+    height: 190px !important;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .member-chip {
+    order: -1;
+    width: 100%;
+  }
+
+  .dashboard-hero {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 380px) {
+  .topbar-actions .ghost-btn {
+    padding-inline: 8px;
+    font-size: 0.7rem;
+  }
+
+  .topbar-actions .primary-btn {
+    padding-inline: 9px;
+  }
+}
+
+/* Visual system: warm paper, ink, and a citrus training accent. */
+:root {
+  --bg: #f4f1ea;
+  --bg-strong: #ebe7de;
+  --panel: rgba(255, 253, 248, 0.94);
+  --panel-strong: #fffdf8;
+  --panel-alt: #f8f5ee;
+  --border: rgba(24, 32, 35, 0.12);
+  --text: #182023;
+  --muted: #68716f;
+  --soft: #8a928e;
+  --accent: #d7f45b;
+  --accent-2: #a7c62e;
+  --accent-3: #e88752;
+  --success: #248b67;
+  --warning: #b77718;
+  --danger: #c54f43;
+  --shadow: 0 16px 42px rgba(43, 48, 42, 0.09);
+}
+
+body {
+  background-color: var(--bg);
+  background-image: linear-gradient(rgba(24, 32, 35, 0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(24, 32, 35, 0.035) 1px, transparent 1px);
+  background-size: 28px 28px;
+  font-family: "DM Sans", sans-serif;
+  color: var(--text);
+}
+
+h1,
+h2,
+h3,
+.brand-name,
+.stat-value,
+.mini-value {
+  font-family: "Space Grotesk", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  margin-bottom: 0;
+  font-size: 1.28rem;
+}
+
+.eyebrow,
+.stat-label,
+.mini-label {
+  color: var(--accent-2);
+  font-weight: 700;
+}
+
+.app-shell {
+  grid-template-columns: 248px 1fr;
+}
+
+.sidebar {
+  padding: 22px 16px;
+  background: rgba(24, 32, 35, 0.98);
+  border-right: 0;
+  box-shadow: 8px 0 28px rgba(24, 32, 35, 0.08);
+}
+
+.brand-wrap {
+  padding: 12px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.brand-badge {
+  border-radius: 11px;
+  background: var(--accent);
+  color: var(--text);
+  box-shadow: 4px 4px 0 rgba(215, 244, 91, 0.16);
+}
+
+.brand-name,
+.sidebar .brand-subtitle,
+.sidebar .mini-value {
+  color: #fffdf8;
+}
+
+.sidebar .brand-subtitle,
+.sidebar .mini-label {
+  color: #aab2a9;
+}
+
+.nav {
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.nav-item {
+  color: #aab2a9;
+  border-radius: 9px;
+  padding: 11px 13px;
+  font-size: 0.88rem;
+}
+
+.nav-item.active,
+.nav-item:hover {
+  color: #182023;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.sidebar-card {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  box-shadow: none;
+}
+
+.main-panel {
+  max-width: 1440px;
+  width: 100%;
+  padding: 34px 42px 48px;
+}
+
+.topbar {
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+h1 {
+  font-size: clamp(2.1rem, 3vw, 3rem);
+}
+
+.primary-btn,
+.ghost-btn,
+.icon-btn,
+.small-btn {
+  border-radius: 9px;
+  font-weight: 700;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.primary-btn {
+  background: var(--accent);
+  color: var(--text);
+  box-shadow: 4px 4px 0 rgba(24, 32, 35, 0.12);
+}
+
+.primary-btn:hover {
+  background: #e1fb71;
+  box-shadow: 2px 2px 0 rgba(24, 32, 35, 0.12);
+}
+
+.ghost-btn,
+.icon-btn {
+  background: rgba(255, 253, 248, 0.58);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.ghost-btn:hover,
+.icon-btn:hover {
+  background: var(--panel-strong);
+  border-color: rgba(24, 32, 35, 0.26);
+}
+
+.stats-grid {
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.stat-card,
+.panel,
+.large-panel,
+.modal-card {
+  background: var(--panel);
+  border-color: var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.stat-card {
+  position: relative;
+  overflow: hidden;
+  padding: 19px 20px;
+}
+
+.stat-card::after {
+  content: "";
+  position: absolute;
+  right: -22px;
+  bottom: -24px;
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.32;
+}
+
+.stat-value {
+  position: relative;
+  z-index: 1;
+}
+
+.panel-grid.two-col {
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.panel,
+.large-panel {
+  padding: 24px;
+}
+
+.panel-header {
+  margin-bottom: 20px;
+}
+
+.chip {
+  background: rgba(36, 139, 103, 0.1);
+  border-color: rgba(36, 139, 103, 0.24);
+  color: var(--success);
+}
+
+.exercise-card,
+.history-item,
+.list-item,
+.pr-item,
+.exercise-plan-item,
+.previous-box {
+  background: var(--panel-alt);
+  border-color: var(--border);
+  border-radius: 11px;
+}
+
+.exercise-card {
+  padding: 20px;
+}
+
+.small-btn {
+  border-color: rgba(167, 198, 46, 0.55);
+  background: rgba(215, 244, 91, 0.18);
+  color: var(--text);
+}
+
+.small-btn:hover {
+  background: var(--accent);
+}
+
+.set-row input,
+.mini-form input,
+.search-input,
+.settings-grid input,
+.mini-select,
+.auth-form input {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(24, 32, 35, 0.16);
+  border-radius: 8px;
+  color: var(--text);
+}
+
+input:focus,
+select:focus,
+button:focus-visible {
+  outline: 3px solid rgba(215, 244, 91, 0.55);
+  outline-offset: 2px;
+}
+
+.calendar-cell {
+  background: rgba(255, 255, 255, 0.55);
+  border-color: var(--border);
+  border-radius: 8px;
+}
+
+.calendar-cell.done {
+  background: var(--accent);
+  border-color: var(--accent-2);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.auth-screen {
+  background-color: var(--bg);
+  background-image: linear-gradient(rgba(24, 32, 35, 0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(24, 32, 35, 0.035) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.auth-card {
+  background: rgba(255, 253, 248, 0.94);
+  border-color: var(--border);
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(43, 48, 42, 0.14);
+}
+
+.auth-tab {
+  background: var(--panel-alt);
+  border-color: var(--border);
+  color: var(--muted);
+  border-radius: 8px;
+}
+
+.auth-tab.active {
+  background: var(--accent);
+  border-color: var(--accent-2);
+  color: var(--text);
+}
+
+.empty-state {
+  background: var(--panel-alt);
+  border-color: rgba(24, 32, 35, 0.2);
+}
+
+@media (max-width: 1100px) {
+  .main-panel {
+    padding: 28px 24px 40px;
+  }
+
+  .sidebar {
+    background: rgba(24, 32, 35, 0.98);
+  }
+}
+
+@media (max-width: 760px) {
+  .main-panel {
+    padding: 18px 12px 32px;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+    background: rgba(244, 241, 234, 0.94);
+    border-bottom-color: var(--border);
+  }
+}
+
+</style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div id="authScreen" class="auth-screen">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="brand-badge">G</div>
+          <div>
+            <p class="eyebrow">Gym performance</p>
+            <h2>Gym Performance Tracker</h2>
+          </div>
+        </div>
+
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-auth-tab="login">Login</button>
+          <button class="auth-tab" data-auth-tab="signup">Create account</button>
+        </div>
+
+        <div id="authMessage" class="auth-message"></div>
+
+        <form id="loginForm" class="auth-form">
+          <label>
+            <span>Email</span>
+            <input type="email" id="loginEmail" placeholder="you@example.com" required />
+          </label>
+          <label>
+            <span>Password</span>
+            <input type="password" id="loginPassword" placeholder="Password" required />
+          </label>
+          <button class="primary-btn" type="submit">Login</button>
+        </form>
+
+        <form id="signupForm" class="auth-form hidden">
+          <label>
+            <span>Full name</span>
+            <input type="text" id="signupName" placeholder="Pavan" required />
+          </label>
+          <label>
+            <span>Email</span>
+            <input type="email" id="signupEmail" placeholder="you@example.com" required />
+          </label>
+          <label>
+            <span>Password</span>
+            <input type="password" id="signupPassword" placeholder="Create password" required />
+          </label>
+          <button class="primary-btn" type="submit">Create account</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="appScreen" class="app-shell hidden">
+      <aside class="sidebar">
+        <div class="brand-wrap">
+          <div class="brand-badge">G</div>
+          <div>
+            <div class="brand-name">Gym Performance</div>
+            <div class="brand-subtitle">Training Tracker</div>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <button class="nav-item active" data-target="dashboard">Dashboard</button>
+          <button class="nav-item" data-target="today-workout">Today's Workout</button>
+          <button class="nav-item" data-target="history">Workout History</button>
+          <button class="nav-item" data-target="progress">Progress</button>
+          <button class="nav-item" data-target="diet">Diet</button>
+          <button class="nav-item" data-target="body">Body Tracking</button>
+          <button class="nav-item" data-target="exercises">Exercises</button>
+          <button class="nav-item" data-target="settings">Settings</button>
+        </nav>
+
+        <div class="sidebar-card">
+          <div class="mini-label">Current streak</div>
+          <div class="mini-value" id="streakValue">0 days</div>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Gym performance dashboard</p>
+            <h1 id="pageTitle">Dashboard</h1>
+          </div>
+          <div class="topbar-actions">
+            <div class="member-chip"><span class="member-dot"></span><span id="memberName">Member</span></div>
+            <button class="ghost-btn" id="resetDemoBtn">Reset Demo Data</button>
+            <button class="primary-btn" id="jumpTodayBtn">Log Today</button>
+            <button class="ghost-btn" id="logoutBtn">Logout</button>
+          </div>
+        </header>
+        <section id="dashboard" class="view active">
+          <div class="stats-grid" id="statsGrid"></div>
+          <div class="dashboard-hero">
+            <div>
+              <p class="eyebrow">Keep building</p>
+              <h2>Train with intent.</h2>
+              <p id="dashboardGreeting">Your next session is ready when you are.</p>
+            </div>
+            <div class="hero-date" id="dashboardDate"></div>
+          </div>
+          <div class="panel-grid two-col">
+            <div class="panel large-panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Today</p>
+                  <h2 id="todayWorkoutTitle">Workout</h2>
+                </div>
+                <span class="chip" id="todayTag">On track</span>
+              </div>
+              <div id="todayOverview"></div>
+            </div>
+
+            <div class="panel large-panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Previous performance</p>
+                  <h2>Recent snapshot</h2>
+                </div>
+              </div>
+              <div id="previousSnapshot"></div>
+            </div>
+          </div>
+
+          <div class="panel-grid two-col">
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Weekly volume</p>
+                  <h2>Last 4 weeks</h2>
+                </div>
+              </div>
+              <canvas id="weeklyVolumeChart"></canvas>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Workout calendar</p>
+                  <h2>Completed sessions</h2>
+                </div>
+              </div>
+              <div id="calendarContainer" class="calendar-grid"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="today-workout" class="view">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Training day</p>
+                <h2 id="todayWorkoutHeading">Today’s Workout</h2>
+              </div>
+            </div>
+            <div id="todayWorkoutList" class="exercise-list"></div>
+          </div>
+        </section>
+
+        <section id="history" class="view">
+          <div class="panel">
+            <div class="panel-header history-header">
+              <div>
+                <p class="eyebrow">Archive</p>
+                <h2>Workout history</h2>
+              </div>
+              <div class="history-filters">
+                <input id="historyStartDate" type="date" class="search-input" />
+                <input id="historyEndDate" type="date" class="search-input" />
+                <input id="historySearch" class="search-input" type="search" placeholder="Search exercise or date" />
+                <button id="clearFiltersBtn" class="ghost-btn small-ghost">Clear</button>
+              </div>
+            </div>
+            <div id="historyList" class="history-list"></div>
+          </div>
+        </section>
+
+        <section id="progress" class="view">
+          <div class="panel-grid two-col">
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Progress</p>
+                  <h2>Weight progression</h2>
+                </div>
+              </div>
+              <canvas id="progressChart"></canvas>
+            </div>
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Performance</p>
+                  <h2>Volume progression</h2>
+                </div>
+              </div>
+              <canvas id="volumeChart"></canvas>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Milestones</p>
+                <h2>Personal records</h2>
+              </div>
+            </div>
+            <div id="prList" class="pr-list"></div>
+          </div>
+          <div class="panel panel-spacer">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Exercise analytics</p>
+                <h2>Exercise-specific chart</h2>
+              </div>
+              <select id="exerciseChartSelect" class="mini-select"></select>
+            </div>
+            <canvas id="exerciseDetailChart"></canvas>
+          </div>
+        </section>
+
+        <section id="diet" class="view">
+          <div class="panel-grid two-col">
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Nutrition</p>
+                  <h2>Food + protein</h2>
+                </div>
+              </div>
+              <form id="dietForm" class="mini-form">
+                <input type="date" id="dietDate" />
+                <input type="text" id="dietMeal" placeholder="Meal / food" />
+                <input type="number" id="dietProtein" step="1" placeholder="Protein g" />
+                <input type="number" id="dietCalories" step="10" placeholder="Calories" />
+                <button type="submit" class="primary-btn">Add meal</button>
+              </form>
+              <div id="dietList" class="list-stack"></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Hydration</p>
+                  <h2>Water intake</h2>
+                </div>
+              </div>
+              <form id="waterForm" class="mini-form">
+                <input type="date" id="waterDate" />
+                <input type="number" id="waterAmount" step="0.25" min="0" placeholder="Liters" />
+                <button type="submit" class="primary-btn">Log water</button>
+              </form>
+              <div id="waterList" class="list-stack"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="body" class="view">
+          <div class="panel-grid two-col">
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Body composition</p>
+                  <h2>Body weight tracker</h2>
+                </div>
+              </div>
+              <form id="bodyForm" class="mini-form">
+                <input type="date" id="bodyDate" />
+                <input type="number" id="bodyWeight" step="0.1" placeholder="Body weight kg" />
+                <button type="submit" class="primary-btn">Save weight</button>
+              </form>
+              <div id="bodyList" class="list-stack"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <p class="eyebrow">Trend</p>
+                  <h2>Weight chart</h2>
+                </div>
+              </div>
+              <canvas id="bodyWeightChart"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <section id="exercises" class="view">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Exercise library</p>
+                <h2>6-day training plan</h2>
+              </div>
+            </div>
+            <div id="exercisePlanList" class="exercise-plan-list"></div>
+          </div>
+        </section>
+
+        <section id="settings" class="view">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Profile</p>
+                <h2>Settings</h2>
+              </div>
+            </div>
+            <div class="settings-grid">
+              <label>
+                <span>Name</span>
+                <input id="profileName" type="text" value="Pavan" />
+              </label>
+              <label>
+                <span>Daily water target (L)</span>
+                <input id="waterTarget" type="number" step="0.25" value="3.5" />
+              </label>
+            </div>
+            <div class="backup-actions">
+              <button id="saveSettingsBtn" class="primary-btn">Save settings</button>
+              <button id="exportBackupBtn" class="ghost-btn">Export backup</button>
+              <button id="importBackupBtn" class="ghost-btn">Import backup</button>
+              <button id="resetDemoSettingsBtn" class="ghost-btn">Reset demo data</button>
+              <input id="backupFileInput" type="file" accept="application/json" hidden />
+            </div>
+          </div>
+          <div class="panel panel-spacer">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Owner view</p>
+                <h2>Client directory on this device</h2>
+              </div>
+            </div>
+            <p class="settings-note">This list is stored only in this browser. GitHub Pages cannot collect client accounts centrally without a backend database.</p>
+            <div id="clientDirectory" class="list-stack"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="editModal" class="modal hidden">
+      <div class="modal-card">
+        <div class="panel-header">
+          <div>
+            <p class="eyebrow">Edit</p>
+            <h2>Workout record</h2>
+          </div>
+          <button id="closeEditModal" class="icon-btn" aria-label="close">×</button>
+        </div>
+        <div id="editModalBody"></div>
+      </div>
+    </div>
+
+    <script>
+const STORAGE_KEY = 'gym_performance_tracker_v1';
+const LEGACY_STORAGE_KEY = 'pavan_workout_tracker_v1';
+const USER_DATA_PREFIX = 'gym_performance_tracker_user_';
+const LEGACY_USER_DATA_PREFIX = 'pavan_workout_tracker_user_';
+const USERS_KEY = 'gym_performance_tracker_users_v1';
+const LEGACY_USERS_KEY = 'pavan_fitness_users_v1';
+const SESSION_KEY = 'gym_performance_tracker_session_v1';
+const LEGACY_SESSION_KEY = 'pavan_fitness_session_v1';
+const REMEMBERED_EMAIL_KEY = 'gym_performance_tracker_remembered_email_v1';
+
+const EXERCISE_PLAN = [
+  {
+    day: 'DAY 1 — CHEST + TRICEPS',
+    exercises: [
+      { name: 'Barbell Bench Press', goal: '4 × 6–8' },
+      { name: 'Incline Dumbbell Press', goal: '3 × 8–12' },
+      { name: 'Dumbbell Fly', goal: '3 × 10–15' },
+      { name: 'Close-Grip Push-ups', goal: '3 × AMRAP' },
+      { name: 'EZ-Bar Skull Crushers', goal: '3 × 8–12' },
+      { name: 'Band Triceps Pushdown', goal: '3 × 12–15' }
+    ]
+  },
+  {
+    day: 'DAY 2 — BACK + BICEPS',
+    exercises: [
+      { name: 'Pull-ups', goal: '4 × AMRAP' },
+      { name: 'Barbell Row', goal: '4 × 6–10' },
+      { name: 'One-Arm Dumbbell Row', goal: '3 × 8–12' },
+      { name: 'Band Face Pull', goal: '3 × 12–15' },
+      { name: 'EZ-Bar Curl', goal: '3 × 8–12' },
+      { name: 'Hammer Curl', goal: '3 × 10–12' }
+    ]
+  },
+  {
+    day: 'DAY 3 — LEGS + ABS',
+    exercises: [
+      { name: 'Barbell Squat', goal: '4 × 6–8' },
+      { name: 'Romanian Deadlift', goal: '3 × 8–10' },
+      { name: 'Bulgarian Split Squat', goal: '3 × 8–12/leg' },
+      { name: 'Dumbbell Goblet Squat', goal: '3 × 10–15' },
+      { name: 'Standing Calf Raise', goal: '4 × 15–20' },
+      { name: 'Hanging Knee Raise', goal: '3 × 10–15' },
+      { name: 'Plank', goal: '3 × 45–60 sec' }
+    ]
+  },
+  {
+    day: 'DAY 4 — SHOULDERS + CHEST + TRICEPS',
+    exercises: [
+      { name: 'Barbell Overhead Press', goal: '4 × 6–8' },
+      { name: 'Dumbbell Shoulder Press', goal: '3 × 8–12' },
+      { name: 'Dumbbell Lateral Raise', goal: '4 × 12–15' },
+      { name: 'Push-ups', goal: '3 × AMRAP' },
+      { name: 'EZ-Bar Close-Grip Press', goal: '3 × 8–12' },
+      { name: 'Band Triceps Extension', goal: '3 × 12–15' }
+    ]
+  },
+  {
+    day: 'DAY 5 — BACK + BICEPS',
+    exercises: [
+      { name: 'Pull-ups', goal: '4 × AMRAP' },
+      { name: 'Barbell Deadlift', goal: '3 × 5–6' },
+      { name: 'Barbell Row', goal: '3 × 8–10' },
+      { name: 'Dumbbell Rear-Delt Fly', goal: '3 × 12–15' },
+      { name: 'EZ-Bar Curl', goal: '3 × 8–12' },
+      { name: 'Dumbbell Hammer Curl', goal: '3 × 10–12' }
+    ]
+  },
+  {
+    day: 'DAY 6 — LEGS + ABS',
+    exercises: [
+      { name: 'Barbell Squat', goal: '4 × 8–10' },
+      { name: 'Romanian Deadlift', goal: '3 × 8–12' },
+      { name: 'Bulgarian Split Squat', goal: '3 × 10/leg' },
+      { name: 'Dumbbell Lunges', goal: '3 × 10/leg' },
+      { name: 'Calf Raises', goal: '4 × 15–20' },
+      { name: 'Hanging Leg/Knee Raises', goal: '3 × 10–15' },
+      { name: 'Plank', goal: '3 × 60 sec' }
+    ]
+  }
+];
+
+const baseState = {
+  profile: {
+    name: 'Pavan',
+    waterTarget: 3.5
+  },
+  plan: JSON.parse(JSON.stringify(EXERCISE_PLAN)),
+  workouts: [],
+  bodyWeight: [],
+  diet: [],
+  water: [],
+  settings: {
+    highlightExercise: 'Barbell Bench Press'
+  }
+};
+
+let state = JSON.parse(JSON.stringify(baseState));
+
+let activeChartRefs = {};
+
+const authState = {
+  users: loadUsers(),
+  activeUser: loadSessionUser()
+};
+
+state = loadState();
+
+document.addEventListener('DOMContentLoaded', initializeApp);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && authState.activeUser) saveState();
+});
+window.addEventListener('pagehide', () => {
+  if (authState.activeUser) saveState();
+});
+
+function initializeApp() {
+  bindAuthEvents();
+  bindEvents();
+  showAuth();
+}
+
+function bindEvents() {
+  document.querySelectorAll('.nav-item').forEach((button) => {
+    button.addEventListener('click', () => switchView(button.dataset.target));
+  });
+
+  document.getElementById('resetDemoBtn').addEventListener('click', resetDemoData);
+  document.getElementById('resetDemoSettingsBtn').addEventListener('click', resetDemoData);
+  document.getElementById('jumpTodayBtn').addEventListener('click', () => switchView('today-workout'));
+  document.getElementById('logoutBtn').addEventListener('click', logoutUser);
+  document.getElementById('historySearch').addEventListener('input', renderHistory);
+  document.getElementById('historyStartDate').addEventListener('change', renderHistory);
+  document.getElementById('historyEndDate').addEventListener('change', renderHistory);
+  document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+    document.getElementById('historySearch').value = '';
+    document.getElementById('historyStartDate').value = '';
+    document.getElementById('historyEndDate').value = '';
+    renderHistory();
+  });
+
+  document.getElementById('exerciseChartSelect').addEventListener('change', renderExerciseDetailChart);
+
+  document.getElementById('exportBackupBtn').addEventListener('click', exportBackup);
+  document.getElementById('importBackupBtn').addEventListener('click', () => {
+    document.getElementById('backupFileInput').click();
+  });
+  document.getElementById('backupFileInput').addEventListener('change', importBackup);
+
+  document.getElementById('dietForm').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const date = document.getElementById('dietDate').value || new Date().toISOString().slice(0, 10);
+    const meal = document.getElementById('dietMeal').value.trim();
+    const protein = Number(document.getElementById('dietProtein').value || 0);
+    const calories = Number(document.getElementById('dietCalories').value || 0);
+
+    if (!meal) return;
+
+    state.diet.push({ id: createId(), date, meal, protein, calories });
+    saveState();
+    document.getElementById('dietForm').reset();
+    setFormDefaults();
+    renderAll();
+  });
+
+  document.getElementById('waterForm').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const date = document.getElementById('waterDate').value || new Date().toISOString().slice(0, 10);
+    const amount = Number(document.getElementById('waterAmount').value || 0);
+
+    if (!amount) return;
+
+    state.water.push({ id: createId(), date, amount });
+    saveState();
+    document.getElementById('waterForm').reset();
+    setFormDefaults();
+    renderAll();
+  });
+
+  document.getElementById('bodyForm').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const date = document.getElementById('bodyDate').value || new Date().toISOString().slice(0, 10);
+    const weight = Number(document.getElementById('bodyWeight').value || 0);
+
+    if (!weight) return;
+
+    state.bodyWeight.push({ id: createId(), date, weight });
+    saveState();
+    document.getElementById('bodyForm').reset();
+    setFormDefaults();
+    renderAll();
+  });
+
+  document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+    state.profile.name = document.getElementById('profileName').value.trim() || 'Pavan';
+    state.profile.waterTarget = Number(document.getElementById('waterTarget').value || 3.5);
+    saveState();
+    renderAll();
+  });
+
+  document.getElementById('closeEditModal').addEventListener('click', hideEditModal);
+  document.getElementById('editModal').addEventListener('click', (event) => {
+    if (event.target.id === 'editModal') hideEditModal();
+  });
+}
+
+function switchView(targetId) {
+  document.querySelectorAll('.nav-item').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.target === targetId);
+  });
+
+  document.querySelectorAll('.view').forEach((view) => {
+    view.classList.toggle('active', view.id === targetId);
+  });
+
+  const pageTitle = document.getElementById('pageTitle');
+  const titles = {
+    dashboard: 'Dashboard',
+    'today-workout': 'Today\'s Workout',
+    history: 'Workout History',
+    progress: 'Progress',
+    diet: 'Diet',
+    body: 'Body Tracking',
+    exercises: 'Exercises',
+    settings: 'Settings'
+  };
+
+  pageTitle.textContent = titles[targetId] || 'Dashboard';
+}
+
+function renderAll() {
+  renderDashboardIdentity();
+  renderStats();
+  renderTodayOverview();
+  renderDashboardCalendar();
+  renderTodayWorkout();
+  renderHistory();
+  renderProgress();
+  renderDiet();
+  renderBodyTracking();
+  renderExercisePlan();
+  renderSettings();
+  renderClientDirectory();
+  renderExerciseChartSelector();
+}
+
+function renderDashboardIdentity() {
+  const memberName = state.profile.name || authState.activeUser?.name || 'Member';
+  document.getElementById('memberName').textContent = memberName;
+  document.getElementById('dashboardGreeting').textContent = `${memberName}, your next session is ready when you are.`;
+  document.getElementById('dashboardDate').textContent = new Intl.DateTimeFormat(undefined, {
+    weekday: 'long',
+    month: 'short',
+    day: 'numeric'
+  }).format(new Date());
+}
+
+function renderStats() {
+  const totalWorkouts = state.workouts.length;
+  const uniqueExercises = new Set(state.workouts.map((entry) => entry.exerciseName)).size;
+  const totalVolume = state.workouts.reduce((sum, workout) => {
+    return sum + workout.sets.reduce((total, set) => total + ((Number(set.weight) || 0) * (Number(set.reps) || 0)), 0);
+  }, 0);
+
+  const workoutDates = [...new Set(state.workouts.map((entry) => entry.date))].sort();
+  const streak = computeStreak();
+  const lastSevenDaysVolume = getLastSevenDaysVolume();
+  const bodyWeightTrends = state.bodyWeight.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+  const lastBody = bodyWeightTrends[bodyWeightTrends.length - 1]?.weight || 0;
+  const firstBody = bodyWeightTrends[0]?.weight || lastBody;
+  const deltaWeight = lastBody && firstBody ? (lastBody - firstBody).toFixed(1) : '0.0';
+
+  const cards = [
+    { label: 'Workouts logged', value: totalWorkouts, meta: `${workoutDates.length} unique days` },
+    { label: 'Weekly volume', value: `${Math.round(lastSevenDaysVolume)} kg`, meta: 'Past 7 days' },
+    { label: 'Workout streak', value: `${streak} days`, meta: `${deltaWeight} kg vs start` },
+    { label: 'Body weight', value: `${lastBody || 0} kg`, meta: 'Latest reading' }
+  ];
+
+  document.getElementById('statsGrid').innerHTML = cards
+    .map(
+      (card) => `
+        <div class="stat-card">
+          <div class="stat-label">${card.label}</div>
+          <p class="stat-value">${card.value}</p>
+          <div class="stat-meta">${card.meta}</div>
+        </div>
+      `
+    )
+    .join('');
+
+  document.getElementById('streakValue').textContent = `${streak} days`;
+}
+
+function renderDashboardCalendar() {
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const calendar = [];
+
+  dayNames.forEach((day) => {
+    calendar.push(`<div class="calendar-cell" style="opacity: 0.7;">${day}</div>`);
+  });
+
+  const offset = (monthStart.getDay() + 1) % 7;
+  for (let i = 0; i < offset; i += 1) {
+    calendar.push('<div class="calendar-cell"></div>');
+  }
+
+  const totalDays = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const completedDates = new Set(state.workouts.map((item) => item.date));
+
+  for (let day = 1; day <= totalDays; day += 1) {
+    const dateKey = new Date(now.getFullYear(), now.getMonth(), day).toISOString().slice(0, 10);
+    const isDone = completedDates.has(dateKey);
+    calendar.push(`<div class="calendar-cell ${isDone ? 'done' : ''}">${day}</div>`);
+  }
+
+  document.getElementById('calendarContainer').innerHTML = calendar.join('');
+}
+
+function renderTodayOverview() {
+  const todayName = getTodayWorkoutDay();
+  const todayPlan = getWorkoutPlanForDay(todayName);
+  const todayEntries = state.workouts.filter((entry) => entry.day === todayName && entry.date === getTodayDate());
+
+  document.getElementById('todayWorkoutTitle').textContent = `${todayName}`;
+  const currentTag = todayEntries.length > 0 ? 'Logged' : 'Ready';
+  document.getElementById('todayTag').textContent = currentTag;
+  document.getElementById('todayTag').style.background = currentTag === 'Logged' ? 'rgba(34, 197, 94, 0.12)' : 'rgba(124, 156, 255, 0.12)';
+
+  const summary = todayPlan.exercises.slice(0, 4).map((exercise) => {
+    const prev = getMostRecentExerciseWorkout(exercise.name, getTodayDate());
+    const line = prev ? `${exercise.name}: ${formatSetSummary(prev.sets)}` : `${exercise.name}: no previous log`;
+    return `<div class="summary-row"><div><p>${exercise.name}</p></div><div><p>${line}</p></div></div>`;
+  }).join('');
+
+  const sessionVolume = todayEntries.reduce((sum, entry) => {
+    return sum + entry.sets.reduce((total, set) => total + ((Number(set.weight) || 0) * (Number(set.reps) || 0)), 0);
+  }, 0);
+
+  document.getElementById('todayOverview').innerHTML = `
+    <div class="summary-row">
+      <div><p>Plan</p></div>
+      <div><strong>${todayPlan.exercises.length} exercises</strong></div>
+    </div>
+    <div class="summary-row">
+      <div><p>Session volume</p></div>
+      <div><strong>${sessionVolume || 0} kg</strong></div>
+    </div>
+    ${summary}
+  `;
+
+  const previousSnapshot = getPreviousWorkoutSnapshot();
+  document.getElementById('previousSnapshot').innerHTML = previousSnapshot || '<div class="empty-state">No previous workout data yet.</div>';
+}
+
+function renderTodayWorkout() {
+  const todayName = getTodayWorkoutDay();
+  const plan = getWorkoutPlanForDay(todayName);
+  const todayCard = document.getElementById('todayWorkoutList');
+  document.getElementById('todayWorkoutHeading').textContent = `${todayName}`;
+
+  todayCard.innerHTML = plan.exercises.map((exercise) => {
+    const previousWorkout = getMostRecentExerciseWorkout(exercise.name, getTodayDate());
+    const defaultSets = getDefaultSetCount(exercise.goal);
+    const setRows = Array.from({ length: defaultSets }, (_, index) => `
+      <div class="set-row" data-set-index="${index}">
+        <div class="set-label">Set ${index + 1}</div>
+        <input type="number" step="0.5" name="weight" placeholder="Weight" value="${previousWorkout?.sets[index]?.weight || ''}" />
+        <input type="number" name="reps" placeholder="Reps" value="${previousWorkout?.sets[index]?.reps || ''}" />
+        <input type="number" step="1" name="duration" placeholder="Sec" value="${previousWorkout?.sets[index]?.duration || ''}" />
+        <input type="text" name="notes" placeholder="Notes" value="${previousWorkout?.sets[index]?.notes || ''}" />
+        <button class="small-btn" type="button" data-copy-last="${exercise.name}">Use last</button>
+      </div>
+    `).join('');
+
+    const prevSummary = previousWorkout
+      ? `
+        <div class="previous-box">
+          <strong>Last workout</strong>
+          <p>${formatSetSummary(previousWorkout.sets)}</p>
+        </div>
+      `
+      : '<div class="previous-box"><strong>Last workout</strong><p>No previous data logged yet.</p></div>';
+
+    return `
+      <div class="exercise-card" data-exercise-name="${exercise.name}">
+        <div class="exercise-head">
+          <div>
+            <h3 class="exercise-title">${exercise.name}</h3>
+            <p class="exercise-subtitle">${exercise.goal}</p>
+          </div>
+          <button class="small-btn" type="button" data-copy-last-master="${exercise.name}">Copy Last Workout</button>
+        </div>
+        ${prevSummary}
+        <div class="sets-form">
+          ${setRows}
+        </div>
+        <div class="save-workout-row">
+          <button class="primary-btn" type="button" data-save-workout="${exercise.name}">Save exercise</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  todayCard.querySelectorAll('[data-copy-last]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const exerciseName = button.dataset.copyLast;
+      const card = button.closest('.exercise-card');
+      const previous = getMostRecentExerciseWorkout(exerciseName, getTodayDate());
+      if (!previous) return;
+
+      card.querySelectorAll('.set-row').forEach((row, idx) => {
+        const source = previous.sets[idx] || previous.sets[previous.sets.length - 1] || {};
+        const weightInput = row.querySelector('[name="weight"]');
+        const repsInput = row.querySelector('[name="reps"]');
+        const durationInput = row.querySelector('[name="duration"]');
+        const notesInput = row.querySelector('[name="notes"]');
+
+        weightInput.value = source.weight ?? '';
+        repsInput.value = source.reps ?? '';
+        durationInput.value = source.duration ?? '';
+        notesInput.value = source.notes ?? '';
+      });
+    });
+  });
+
+  todayCard.querySelectorAll('[data-save-workout]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const exerciseName = button.dataset.saveWorkout;
+      const card = button.closest('.exercise-card');
+      const sets = [];
+      card.querySelectorAll('.set-row').forEach((row, index) => {
+        const weight = Number(row.querySelector('[name="weight"]').value || 0);
+        const reps = Number(row.querySelector('[name="reps"]').value || 0);
+        const duration = Number(row.querySelector('[name="duration"]').value || 0);
+        const notes = row.querySelector('[name="notes"]').value.trim();
+
+        if (weight || reps || duration || notes) {
+          sets.push({
+            setNumber: index + 1,
+            weight: weight || null,
+            reps: reps || null,
+            duration: duration || null,
+            notes
+          });
+        }
+      });
+
+      if (sets.length === 0) return;
+
+      const record = {
+        id: createId(),
+        date: getTodayDate(),
+        day: todayName,
+        exerciseName,
+        sets,
+        notes: ''
+      };
+
+      state.workouts.push(record);
+      saveState();
+      renderAll();
+    });
+  });
+
+  todayCard.querySelectorAll('[data-copy-last-master]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const exerciseName = button.dataset.copyLastMaster;
+      const previous = getMostRecentExerciseWorkout(exerciseName, getTodayDate());
+      const card = button.closest('.exercise-card');
+      const rows = card.querySelectorAll('.set-row');
+
+      if (!previous) return;
+
+      rows.forEach((row, idx) => {
+        const source = previous.sets[idx] || previous.sets[previous.sets.length - 1] || {};
+        row.querySelector('[name="weight"]').value = source.weight ?? '';
+        row.querySelector('[name="reps"]').value = source.reps ?? '';
+        row.querySelector('[name="duration"]').value = source.duration ?? '';
+        row.querySelector('[name="notes"]').value = source.notes ?? '';
+      });
+    });
+  });
+}
+
+function renderHistory() {
+  const search = document.getElementById('historySearch')?.value.toLowerCase() || '';
+  const startDate = document.getElementById('historyStartDate')?.value || '';
+  const endDate = document.getElementById('historyEndDate')?.value || '';
+
+  const sorted = [...state.workouts].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const filtered = sorted.filter((entry) => {
+    const haystack = `${entry.exerciseName} ${entry.day} ${entry.date}`.toLowerCase();
+    const matchesSearch = haystack.includes(search);
+    const matchesStart = !startDate || entry.date >= startDate;
+    const matchesEnd = !endDate || entry.date <= endDate;
+    return matchesSearch && matchesStart && matchesEnd;
+  });
+
+  document.getElementById('historyList').innerHTML = filtered.length
+    ? filtered.map((entry) => `
+      <div class="history-item">
+        <div class="history-top">
+          <div>
+            <strong>${entry.exerciseName}</strong>
+            <div class="pill">${entry.day}</div>
+          </div>
+          <div class="history-actions">
+            <button class="small-btn" type="button" data-edit-record="${entry.id}">Edit</button>
+            <button class="small-btn" type="button" data-delete-record="${entry.id}">Delete</button>
+          </div>
+        </div>
+        <div class="history-details">
+          <span class="pill">${entry.date}</span>
+          ${entry.sets.map((set) => `<span class="pill">Set ${set.setNumber}: ${formatSet(set)}</span>`).join('')}
+        </div>
+      </div>
+    `).join('')
+    : '<div class="empty-state">No workout entries match your search.</div>';
+
+  document.querySelectorAll('[data-delete-record]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const id = button.dataset.deleteRecord;
+      state.workouts = state.workouts.filter((entry) => entry.id !== id);
+      saveState();
+      renderAll();
+    });
+  });
+
+  document.querySelectorAll('[data-edit-record]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const record = state.workouts.find((entry) => entry.id === button.dataset.editRecord);
+      if (!record) return;
+      openEditModal(record);
+    });
+  });
+}
+
+function renderProgress() {
+  const exerciseStats = collectExerciseProgress();
+
+  const prCards = exerciseStats
+    .slice()
+    .sort((a, b) => b.prWeight - a.prWeight)
+    .slice(0, 6)
+    .map((item) => `
+      <div class="pr-item">
+        <strong>${item.exerciseName}</strong>
+        <div class="pill">PR ${item.prWeight} kg • +${item.progressKg.toFixed(1)} kg</div>
+      </div>
+    `)
+    .join('');
+
+  document.getElementById('prList').innerHTML = prCards || '<div class="empty-state">Log workouts to generate personal records.</div>';
+
+  const labels = getLastFourWeeksLabels();
+  const volumeSeries = getLastFourWeeksVolume();
+
+  renderChart('progressChart', 'line', {
+    labels,
+    datasets: [{
+      label: 'Weekly volume',
+      data: volumeSeries,
+      borderColor: '#7c9cff',
+      backgroundColor: 'rgba(124, 156, 255, 0.2)',
+      tension: 0.35,
+      fill: true
+    }]
+  });
+
+  renderChart('volumeChart', 'bar', {
+    labels,
+    datasets: [{
+      label: 'Volume kg',
+      data: volumeSeries,
+      backgroundColor: ['#5eead4', '#7c9cff', '#f97316', '#34d399']
+    }]
+  });
+
+  renderExerciseDetailChart();
+}
+
+function renderExerciseChartSelector() {
+  const exerciseNames = [...new Set(state.workouts.map((entry) => entry.exerciseName))].sort();
+  const select = document.getElementById('exerciseChartSelect');
+  if (!select) return;
+
+  if (!exerciseNames.length) {
+    select.innerHTML = '<option>No data</option>';
+    return;
+  }
+
+  const selected = select.value || exerciseNames[0];
+  select.innerHTML = exerciseNames.map((name) => `<option value="${name}" ${name === selected ? 'selected' : ''}>${name}</option>`).join('');
+  if (!selected || !exerciseNames.includes(selected)) {
+    select.value = exerciseNames[0];
+  }
+}
+
+function renderExerciseDetailChart() {
+  const select = document.getElementById('exerciseChartSelect');
+  if (!select || !select.value) return;
+
+  const exerciseName = select.value;
+  const values = state.workouts
+    .filter((entry) => entry.exerciseName === exerciseName)
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  const labels = values.map((entry) => entry.date.slice(5));
+  const weights = values.map((entry) => {
+    const validWeights = entry.sets.filter((set) => set.weight != null).map((set) => Number(set.weight));
+    return validWeights.length ? Math.max(...validWeights) : 0;
+  });
+
+  renderChart('exerciseDetailChart', 'line', {
+    labels,
+    datasets: [{
+      label: `${exerciseName} best set`,
+      data: weights,
+      borderColor: '#5eead4',
+      backgroundColor: 'rgba(94, 234, 212, 0.2)',
+      tension: 0.3,
+      fill: true
+    }]
+  });
+}
+
+function collectExerciseProgress() {
+  const map = new Map();
+
+  state.workouts.forEach((entry) => {
+    if (!map.has(entry.exerciseName)) {
+      map.set(entry.exerciseName, []);
+    }
+
+    entry.sets.forEach((set) => {
+      if (set.weight != null && set.weight !== 0) {
+        map.get(entry.exerciseName).push({
+          date: entry.date,
+          weight: Number(set.weight),
+          reps: Number(set.reps || 0),
+          volume: Number(set.weight) * Number(set.reps || 0)
+        });
+      }
+    });
+  });
+
+  return [...map.entries()].map(([exerciseName, values]) => {
+    const sorted = values.sort((a, b) => new Date(a.date) - new Date(b.date));
+    const prWeight = sorted.reduce((max, item) => Math.max(max, item.weight), 0);
+    const firstWeight = sorted[0]?.weight || 0;
+    const latestWeight = sorted[sorted.length - 1]?.weight || 0;
+
+    return {
+      exerciseName,
+      prWeight,
+      progressKg: latestWeight - firstWeight
+    };
+  });
+}
+
+function renderDiet() {
+  const dietEntries = [...state.diet].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const waterEntries = [...state.water].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  const totalProtein = dietEntries.reduce((sum, meal) => sum + Number(meal.protein || 0), 0);
+  const totalWater = waterEntries.reduce((sum, item) => sum + Number(item.amount || 0), 0);
+  const waterTarget = Number(state.profile.waterTarget || 3.5);
+
+  document.getElementById('dietList').innerHTML = dietEntries.length
+    ? dietEntries.slice(0, 8).map((meal) => `
+      <div class="list-item">
+        <div>
+          <strong>${meal.meal}</strong>
+          <div class="pill">${meal.date}</div>
+        </div>
+        <div class="history-actions">
+          <span class="pill">${meal.protein}g protein</span>
+          <span class="pill">${meal.calories} kcal</span>
+        </div>
+      </div>
+    `).join('')
+    : '<div class="empty-state">No meals logged yet.</div>';
+
+  document.getElementById('waterList').innerHTML = `
+    <div class="summary-row">
+      <div><p>Water today</p></div>
+      <div><strong>${totalWater.toFixed(2)} / ${waterTarget.toFixed(2)} L</strong></div>
+    </div>
+    ${waterEntries.slice(0, 6).map((entry) => `
+      <div class="list-item">
+        <div><strong>${entry.date}</strong></div>
+        <div><span class="pill">${entry.amount} L</span></div>
+      </div>
+    `).join('') || '<div class="empty-state">No water logs yet.</div>'}
+  `;
+
+  document.getElementById('dietDate').value = new Date().toISOString().slice(0, 10);
+  document.getElementById('waterDate').value = new Date().toISOString().slice(0, 10);
+  document.getElementById('dietMeal').focus();
+}
+
+function renderBodyTracking() {
+  const sortedEntries = [...state.bodyWeight].sort((a, b) => new Date(a.date) - new Date(b.date));
+  const latest = sortedEntries[sortedEntries.length - 1]?.weight || 0;
+
+  document.getElementById('bodyList').innerHTML = sortedEntries.length
+    ? sortedEntries.slice(-6).reverse().map((entry) => `
+      <div class="list-item">
+        <div><strong>${entry.date}</strong></div>
+        <div><span class="pill">${entry.weight} kg</span></div>
+      </div>
+    `).join('')
+    : '<div class="empty-state">No weight entries logged yet.</div>';
+
+  document.getElementById('bodyDate').value = new Date().toISOString().slice(0, 10);
+
+  renderChart('bodyWeightChart', 'line', {
+    labels: sortedEntries.map((entry) => entry.date.slice(5)),
+    datasets: [{
+      label: 'Body weight (kg)',
+      data: sortedEntries.map((entry) => entry.weight),
+      borderColor: '#5eead4',
+      backgroundColor: 'rgba(94, 234, 212, 0.2)',
+      fill: true,
+      tension: 0.28
+    }]
+  });
+
+  document.getElementById('bodyWeight').placeholder = latest ? `Latest ${latest} kg` : 'Body weight kg';
+}
+
+function renderExercisePlan() {
+  const container = document.getElementById('exercisePlanList');
+
+  container.innerHTML = state.plan.map((day) => `
+    <div class="exercise-plan-item">
+      <div class="exercise-plan-head">
+        <div>
+          <strong>${day.day}</strong>
+        </div>
+        <span class="pill">${day.exercises.length} exercises</span>
+      </div>
+      <div class="history-details">
+        ${day.exercises.map((exercise) => `<span class="pill">${exercise.name}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderSettings() {
+  const name = state.profile.name || 'Pavan';
+  document.getElementById('profileName').value = name;
+  document.getElementById('waterTarget').value = state.profile.waterTarget || 3.5;
+}
+
+function renderClientDirectory() {
+  const directory = document.getElementById('clientDirectory');
+  if (!directory) return;
+
+  directory.innerHTML = authState.users.length
+    ? authState.users.map((user) => `
+      <div class="list-item">
+        <div>
+          <strong>${user.name || 'Member'}</strong>
+          <div class="settings-note">${user.email}</div>
+        </div>
+        <div class="history-actions">
+          <span class="pill">Joined ${formatUserDate(user.createdAt)}</span>
+          <span class="pill">Last login ${formatUserDate(user.lastLoginAt)}</span>
+        </div>
+      </div>
+    `).join('')
+    : '<div class="empty-state">No client accounts have been created on this device.</div>';
+}
+
+function formatUserDate(value) {
+  if (!value) return 'Not recorded';
+  return new Date(value).toLocaleDateString();
+}
+
+function bindAuthEvents() {
+  document.querySelectorAll('.auth-tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.authTab;
+      document.querySelectorAll('.auth-tab').forEach((item) => item.classList.toggle('active', item === tab));
+      document.getElementById('loginForm').classList.toggle('hidden', target !== 'login');
+      document.getElementById('signupForm').classList.toggle('hidden', target !== 'signup');
+    });
+  });
+
+  document.getElementById('loginForm').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+    const password = document.getElementById('loginPassword').value;
+    const user = authState.users.find((item) => item.email === email && item.password === password);
+
+    if (!user) {
+      showAuthMessage('Invalid email or password.', true);
+      return;
+    }
+
+    user.lastLoginAt = new Date().toISOString();
+    user.loginCount = (user.loginCount || 0) + 1;
+    localStorage.setItem(REMEMBERED_EMAIL_KEY, email);
+    saveUsers();
+    setActiveUser(user);
+    showApp();
+    ensureSeedData();
+    setFormDefaults();
+    renderAll();
+  });
+
+  document.getElementById('signupForm').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const name = document.getElementById('signupName').value.trim() || 'Pavan';
+    const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+    const password = document.getElementById('signupPassword').value;
+
+    if (!email || !password) {
+      showAuthMessage('Please complete all fields.', true);
+      return;
+    }
+
+    const exists = authState.users.some((user) => user.email === email);
+    if (exists) {
+      showAuthMessage('An account with this email already exists.', true);
+      return;
+    }
+
+    const newUser = {
+      id: createId(),
+      name,
+      email,
+      password,
+      createdAt: new Date().toISOString(),
+      lastLoginAt: new Date().toISOString(),
+      loginCount: 1
+    };
+
+    authState.users.push(newUser);
+    saveUsers();
+    localStorage.setItem(REMEMBERED_EMAIL_KEY, email);
+    setActiveUser(newUser);
+    showApp();
+    ensureSeedData();
+    setFormDefaults();
+    renderAll();
+    showAuthMessage('Account created successfully.', false);
+  });
+}
+
+function showAuthMessage(text, isError) {
+  const box = document.getElementById('authMessage');
+  box.textContent = text;
+  box.classList.toggle('error', !!isError);
+}
+
+function showApp() {
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('appScreen').classList.remove('hidden');
+  state = loadState();
+  const userName = authState.activeUser?.name || 'Pavan';
+  document.getElementById('profileName').value = userName;
+  document.getElementById('memberName').textContent = userName;
+  state.profile.name = userName;
+  saveState();
+}
+
+function showAuth() {
+  document.getElementById('appScreen').classList.add('hidden');
+  document.getElementById('authScreen').classList.remove('hidden');
+  document.querySelectorAll('.auth-tab').forEach((tab) => tab.classList.toggle('active', tab.dataset.authTab === 'login'));
+  document.getElementById('loginForm').classList.remove('hidden');
+  document.getElementById('signupForm').classList.add('hidden');
+  document.getElementById('loginForm').reset();
+  document.getElementById('signupForm').reset();
+  document.getElementById('loginEmail').value = localStorage.getItem(REMEMBERED_EMAIL_KEY) || '';
+  showAuthMessage('', false);
+}
+
+function logoutUser() {
+  authState.activeUser = null;
+  localStorage.removeItem(SESSION_KEY);
+  state = loadState();
+  showAuth();
+}
+
+function setActiveUser(user) {
+  authState.activeUser = user;
+  saveSessionUser(user);
+  state = loadState();
+}
+
+function saveUsers() {
+  localStorage.setItem(USERS_KEY, JSON.stringify(authState.users));
+}
+
+function loadUsers() {
+  try {
+    const raw = localStorage.getItem(USERS_KEY) || localStorage.getItem(LEGACY_USERS_KEY);
+    const users = raw ? JSON.parse(raw) : [];
+    if (users.length && !localStorage.getItem(USERS_KEY)) saveUsers();
+    return Array.isArray(users) ? users : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveSessionUser(user) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify(user));
+}
+
+function loadSessionUser() {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY) || localStorage.getItem(LEGACY_SESSION_KEY);
+    const session = raw ? JSON.parse(raw) : null;
+    if (session && !localStorage.getItem(SESSION_KEY)) saveSessionUser(session);
+    return session;
+  } catch (error) {
+    return null;
+  }
+}
+
+function openEditModal(record) {
+  const modal = document.getElementById('editModal');
+  modal.classList.remove('hidden');
+
+  const setsMarkup = record.sets.map((set, index) => `
+    <div class="edit-set-row">
+      <div class="set-label">Set ${index + 1}</div>
+      <input data-field="weight" value="${set.weight ?? ''}" placeholder="Weight" />
+      <input data-field="reps" value="${set.reps ?? ''}" placeholder="Reps" />
+      <input data-field="duration" value="${set.duration ?? ''}" placeholder="Sec" />
+      <input data-field="notes" value="${set.notes ?? ''}" placeholder="Notes" />
+      <button type="button" class="small-btn" data-remove-set="${index}">Remove</button>
+    </div>
+  `).join('');
+
+  document.getElementById('editModalBody').innerHTML = `
+    <div class="edit-form-grid">
+      <div class="summary-row">
+        <div><p>Exercise</p></div>
+        <div><strong>${record.exerciseName}</strong></div>
+      </div>
+      <div class="summary-row">
+        <div><p>Date</p></div>
+        <div><strong>${record.date}</strong></div>
+      </div>
+      ${setsMarkup}
+      <div style="display:flex; justify-content:space-between; gap:12px; margin-top:12px;">
+        <button class="ghost-btn" type="button" id="addSetBtn">Add set</button>
+        <button class="primary-btn" type="button" id="saveEditBtn">Save changes</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('saveEditBtn').addEventListener('click', () => {
+    const editedSets = [];
+    const rows = document.querySelectorAll('.edit-set-row');
+    rows.forEach((row, index) => {
+      const weight = Number(row.querySelector('[data-field="weight"]').value || 0);
+      const reps = Number(row.querySelector('[data-field="reps"]').value || 0);
+      const duration = Number(row.querySelector('[data-field="duration"]').value || 0);
+      const notes = row.querySelector('[data-field="notes"]').value.trim();
+
+      if (weight || reps || duration || notes) {
+        editedSets.push({
+          setNumber: index + 1,
+          weight: weight || null,
+          reps: reps || null,
+          duration: duration || null,
+          notes
+        });
+      }
+    });
+
+    const idx = state.workouts.findIndex((entry) => entry.id === record.id);
+    if (idx >= 0) {
+      state.workouts[idx].sets = editedSets;
+      saveState();
+      hideEditModal();
+      renderAll();
+    }
+  });
+
+  document.getElementById('addSetBtn').addEventListener('click', () => {
+    const parent = document.querySelector('.edit-form-grid');
+    const newRow = document.createElement('div');
+    newRow.className = 'edit-set-row';
+    newRow.innerHTML = `
+      <div class="set-label">Set ${parent.querySelectorAll('.edit-set-row').length + 1}</div>
+      <input data-field="weight" value="" placeholder="Weight" />
+      <input data-field="reps" value="" placeholder="Reps" />
+      <input data-field="duration" value="" placeholder="Sec" />
+      <input data-field="notes" value="" placeholder="Notes" />
+      <button type="button" class="small-btn" data-remove-set="${parent.querySelectorAll('.edit-set-row').length}">Remove</button>
+    `;
+    parent.insertBefore(newRow, parent.querySelector('div:last-child'));
+    bindRemoveSetButtons();
+  });
+
+  bindRemoveSetButtons();
+}
+
+function bindRemoveSetButtons() {
+  document.querySelectorAll('[data-remove-set]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const row = button.closest('.edit-set-row');
+      row.remove();
+    });
+  });
+}
+
+function hideEditModal() {
+  document.getElementById('editModal').classList.add('hidden');
+}
+
+function getPreviousWorkoutSnapshot() {
+  const topExercises = ['Barbell Bench Press', 'Barbell Squat', 'Barbell Row', 'Pull-ups', 'EZ-Bar Curl'];
+  const ordered = topExercises.map((name) => {
+    const workout = getMostRecentExerciseWorkout(name, null, false);
+    if (!workout) return null;
+    return `
+      <div class="summary-row">
+        <div><p>${name}</p></div>
+        <div><strong>${formatSetSummary(workout.sets)}</strong></div>
+      </div>
+    `;
+  }).filter(Boolean).join('');
+
+  return ordered || '<div class="empty-state">No prior performance available.</div>';
+}
+
+function renderChart(id, type, config) {
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+
+  if (activeChartRefs[id]) {
+    activeChartRefs[id].destroy();
+  }
+
+  activeChartRefs[id] = new Chart(canvas, {
+    type,
+    data: {
+      labels: config.labels || [],
+      datasets: config.datasets || []
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: { color: '#dfe6f7' }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#a7b4c9' },
+          grid: { color: 'rgba(148,163,184,0.12)' }
+        },
+        y: {
+          ticks: { color: '#a7b4c9' },
+          grid: { color: 'rgba(148,163,184,0.12)' }
+        }
+      }
+    }
+  });
+}
+
+function getLastFourWeeksLabels() {
+  const labels = [];
+  for (let i = 3; i >= 0; i -= 1) {
+    const d = new Date();
+    d.setDate(d.getDate() - (i * 7));
+    labels.push(d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+  }
+  return labels;
+}
+
+function getLastFourWeeksVolume() {
+  const now = new Date();
+  const weekStarts = [];
+
+  for (let i = 3; i >= 0; i -= 1) {
+    const start = new Date(now);
+    start.setDate(now.getDate() - (i * 7 + 6));
+    start.setHours(0, 0, 0, 0);
+    weekStarts.push(start);
+  }
+
+  return weekStarts.map((start) => {
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    end.setHours(23, 59, 59, 999);
+
+    let total = 0;
+    state.workouts.forEach((entry) => {
+      const date = new Date(`${entry.date}T00:00:00`);
+      if (date >= start && date <= end) {
+        total += entry.sets.reduce((sum, set) => sum + ((Number(set.weight) || 0) * (Number(set.reps) || 0)), 0);
+      }
+    });
+    return Number(total.toFixed(1));
+  });
+}
+
+function getLastSevenDaysVolume() {
+  const now = new Date();
+  const start = new Date(now);
+  start.setDate(now.getDate() - 6);
+  start.setHours(0, 0, 0, 0);
+
+  let total = 0;
+  state.workouts.forEach((entry) => {
+    const date = new Date(`${entry.date}T00:00:00`);
+    if (date >= start && date <= now) {
+      total += entry.sets.reduce((sum, set) => sum + ((Number(set.weight) || 0) * (Number(set.reps) || 0)), 0);
+    }
+  });
+  return Number(total.toFixed(1));
+}
+
+function computeStreak() {
+  const dates = [...new Set(state.workouts.map((record) => record.date))].sort().reverse();
+  if (!dates.length) return 0;
+
+  let streak = 0;
+  let cursor = new Date();
+  cursor.setHours(0, 0, 0, 0);
+
+  while (true) {
+    const iso = cursor.toISOString().slice(0, 10);
+    if (dates.includes(iso)) {
+      streak += 1;
+      cursor.setDate(cursor.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+
+  return streak;
+}
+
+function ensureSeedData() {
+  if (state.workouts.length > 0) return;
+
+  const sampleDates = [
+    getRelativeDate(-28),
+    getRelativeDate(-21),
+    getRelativeDate(-14),
+    getRelativeDate(-7),
+    getRelativeDate(-3)
+  ];
+
+  const seedEntries = [
+    { day: 'DAY 1 — CHEST + TRICEPS', exercise: 'Barbell Bench Press', sets: [{ weight: 28, reps: 8 }, { weight: 28, reps: 8 }, { weight: 26, reps: 7 }, { weight: 26, reps: 6 }] },
+    { day: 'DAY 1 — CHEST + TRICEPS', exercise: 'Incline Dumbbell Press', sets: [{ weight: 20, reps: 10 }, { weight: 20, reps: 9 }, { weight: 18, reps: 10 }] },
+    { day: 'DAY 2 — BACK + BICEPS', exercise: 'Pull-ups', sets: [{ weight: null, reps: 9 }, { weight: null, reps: 8 }, { weight: null, reps: 7 }, { weight: null, reps: 6 }] },
+    { day: 'DAY 2 — BACK + BICEPS', exercise: 'Barbell Row', sets: [{ weight: 50, reps: 8 }, { weight: 50, reps: 8 }, { weight: 47.5, reps: 9 }, { weight: 47.5, reps: 8 }] },
+    { day: 'DAY 3 — LEGS + ABS', exercise: 'Barbell Squat', sets: [{ weight: 70, reps: 8 }, { weight: 70, reps: 8 }, { weight: 67.5, reps: 7 }, { weight: 67.5, reps: 7 }] },
+    { day: 'DAY 3 — LEGS + ABS', exercise: 'Romanian Deadlift', sets: [{ weight: 65, reps: 10 }, { weight: 65, reps: 9 }, { weight: 60, reps: 10 }] },
+    { day: 'DAY 4 — SHOULDERS + CHEST + TRICEPS', exercise: 'Barbell Overhead Press', sets: [{ weight: 40, reps: 8 }, { weight: 40, reps: 8 }, { weight: 37.5, reps: 7 }, { weight: 37.5, reps: 7 }] },
+    { day: 'DAY 4 — SHOULDERS + CHEST + TRICEPS', exercise: 'Dumbbell Lateral Raise', sets: [{ weight: 10, reps: 15 }, { weight: 10, reps: 14 }, { weight: 10, reps: 13 }, { weight: 8, reps: 15 }] },
+    { day: 'DAY 5 — BACK + BICEPS', exercise: 'EZ-Bar Curl', sets: [{ weight: 22.5, reps: 10 }, { weight: 22.5, reps: 9 }, { weight: 20, reps: 10 }] },
+    { day: 'DAY 5 — BACK + BICEPS', exercise: 'Barbell Deadlift', sets: [{ weight: 90, reps: 6 }, { weight: 90, reps: 5 }, { weight: 85, reps: 6 }] },
+    { day: 'DAY 6 — LEGS + ABS', exercise: 'Barbell Squat', sets: [{ weight: 62.5, reps: 10 }, { weight: 62.5, reps: 10 }, { weight: 60, reps: 9 }, { weight: 60, reps: 9 }] },
+    { day: 'DAY 6 — LEGS + ABS', exercise: 'Plank', sets: [{ duration: 40, reps: null }, { duration: 40, reps: null }, { duration: 45, reps: null }] }
+  ];
+
+  sampleDates.forEach((date, index) => {
+    const updates = seedEntries.map((entry, entryIndex) => {
+      const adjusted = JSON.parse(JSON.stringify(entry));
+      adjusted.id = createId();
+      adjusted.date = date;
+      adjusted.exerciseName = entry.exercise;
+      adjusted.notes = `Sample ${entry.day} log`; 
+      adjusted.sets = adjusted.sets.map((set, setIndex) => ({
+        setNumber: setIndex + 1,
+        weight: set.weight ?? null,
+        reps: set.reps ?? null,
+        duration: set.duration ?? null,
+        notes: setIndex % 2 === 0 ? 'Good pacing' : ''
+      }));
+      return adjusted;
+    });
+
+    state.workouts.push(...updates);
+  });
+
+  state.bodyWeight = [
+    { id: createId(), date: getRelativeDate(-28), weight: 74.8 },
+    { id: createId(), date: getRelativeDate(-21), weight: 74.3 },
+    { id: createId(), date: getRelativeDate(-14), weight: 74.1 },
+    { id: createId(), date: getRelativeDate(-7), weight: 73.9 },
+    { id: createId(), date: getRelativeDate(-3), weight: 73.7 }
+  ];
+
+  state.diet = [
+    { id: createId(), date: getRelativeDate(-3), meal: 'Chicken rice bowl', protein: 48, calories: 580 },
+    { id: createId(), date: getRelativeDate(-2), meal: 'Salmon quinoa plate', protein: 52, calories: 640 },
+    { id: createId(), date: getRelativeDate(-1), meal: 'Greek yogurt oats', protein: 33, calories: 420 }
+  ];
+
+  state.water = [
+    { id: createId(), date: getRelativeDate(-3), amount: 2.5 },
+    { id: createId(), date: getRelativeDate(-2), amount: 3.0 },
+    { id: createId(), date: getRelativeDate(-1), amount: 3.5 }
+  ];
+
+  saveState();
+}
+
+function resetDemoData() {
+  state = JSON.parse(JSON.stringify(baseState));
+  ensureSeedData();
+  switchView('dashboard');
+  renderAll();
+}
+
+function formatSetSummary(sets) {
+  if (!sets || !sets.length) return 'No sets logged';
+  return sets.map((set) => formatSet(set)).join(' • ');
+}
+
+function formatSet(set) {
+  const weight = set.weight != null && set.weight !== 0 ? `${set.weight} kg` : 'bodyweight';
+  const reps = set.reps != null ? `${set.reps} reps` : '';
+  const duration = set.duration != null ? `${set.duration}s` : '';
+  const elements = [weight, reps, duration].filter(Boolean);
+  return elements.join(' × ');
+}
+
+function getMostRecentExerciseWorkout(exerciseName, currentDate = null, ignoreCurrentDate = true) {
+  const matches = state.workouts
+    .filter((entry) => entry.exerciseName === exerciseName)
+    .filter((entry) => !currentDate || (ignoreCurrentDate ? entry.date !== currentDate : true))
+    .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+  return matches[0] || null;
+}
+
+function getTodayDate() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function createId() {
+  if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function getTodayWorkoutDay() {
+  const dayIndex = (new Date().getDay() + 6) % 7;
+  return state.plan[dayIndex % state.plan.length].day;
+}
+
+function getWorkoutPlanForDay(dayLabel) {
+  return state.plan.find((plan) => plan.day === dayLabel) || state.plan[0];
+}
+
+function setFormDefaults() {
+  const today = new Date();
+  const inputIds = ['dietDate', 'waterDate', 'bodyDate'];
+  inputIds.forEach((id) => {
+    const field = document.getElementById(id);
+    if (field) field.value = today.toISOString().slice(0, 10);
+  });
+}
+
+function getRelativeDate(daysAgo) {
+  const date = new Date();
+  date.setDate(date.getDate() + daysAgo);
+  return date.toISOString().slice(0, 10);
+}
+
+function getDefaultSetCount(goalText) {
+  if (goalText.includes('AMRAP')) return 3;
+  const match = goalText.match(/(\d+)/);
+  return match ? Number(match[1]) : 3;
+}
+
+function exportBackup() {
+  const payload = JSON.stringify(state, null, 2);
+  const blob = new Blob([payload], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'pavan-fitness-backup.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+function importBackup(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (loadEvent) => {
+    try {
+      const parsed = JSON.parse(String(loadEvent.target?.result || '{}'));
+      const merged = {
+        ...JSON.parse(JSON.stringify(baseState)),
+        ...parsed,
+        profile: { ...baseState.profile, ...(parsed.profile || {}) },
+        settings: { ...baseState.settings, ...(parsed.settings || {}) },
+        plan: Array.isArray(parsed.plan) && parsed.plan.length ? parsed.plan : JSON.parse(JSON.stringify(baseState.plan)),
+        workouts: Array.isArray(parsed.workouts) ? parsed.workouts : [],
+        bodyWeight: Array.isArray(parsed.bodyWeight) ? parsed.bodyWeight : [],
+        diet: Array.isArray(parsed.diet) ? parsed.diet : [],
+        water: Array.isArray(parsed.water) ? parsed.water : []
+      };
+
+      Object.assign(state, merged);
+      saveState();
+      renderAll();
+      event.target.value = '';
+    } catch (error) {
+      alert('Invalid backup file. Please select a valid JSON export.');
+    }
+  };
+
+  reader.readAsText(file);
+}
+
+function saveState() {
+  const userKey = authState.activeUser ? `${USER_DATA_PREFIX}${authState.activeUser.id}` : STORAGE_KEY;
+  localStorage.setItem(userKey, JSON.stringify(state));
+
+  if (!authState.activeUser) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+}
+
+function loadState() {
+  const activeUser = authState.activeUser;
+  const userKey = activeUser ? `${USER_DATA_PREFIX}${activeUser.id}` : STORAGE_KEY;
+  const legacyUserKey = activeUser ? `${LEGACY_USER_DATA_PREFIX}${activeUser.id}` : LEGACY_STORAGE_KEY;
+  const raw = activeUser
+    ? localStorage.getItem(userKey) || localStorage.getItem(legacyUserKey)
+    : localStorage.getItem(STORAGE_KEY) || localStorage.getItem(LEGACY_STORAGE_KEY);
+  if (!raw) return JSON.parse(JSON.stringify(baseState));
+
+  try {
+    const parsed = JSON.parse(raw);
+    return {
+      ...JSON.parse(JSON.stringify(baseState)),
+      ...parsed,
+      profile: { ...baseState.profile, ...(parsed.profile || {}) },
+      settings: { ...baseState.settings, ...(parsed.settings || {}) },
+      plan: Array.isArray(parsed.plan) && parsed.plan.length ? parsed.plan : JSON.parse(JSON.stringify(baseState.plan)),
+      workouts: Array.isArray(parsed.workouts)
+        ? parsed.workouts.filter((workout) => workout && Array.isArray(workout.sets))
+        : [],
+      bodyWeight: Array.isArray(parsed.bodyWeight) ? parsed.bodyWeight : [],
+      diet: Array.isArray(parsed.diet) ? parsed.diet : [],
+      water: Array.isArray(parsed.water) ? parsed.water : []
+    };
+  } catch (error) {
+    return JSON.parse(JSON.stringify(baseState));
+  }
+}
+
+</script>
+  </body>
+</html>
